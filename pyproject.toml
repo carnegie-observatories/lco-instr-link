@@ -1,0 +1,17 @@
+[project]
+name = "lco-instr-link"
+version = "0.1.0"
+description = "LCO Instruments TCP/IP Link"
+readme = "README.md"
+authors = [
+    { name = "William Schoenell", email = "wschoenell@carnegiescience.edu" }
+]
+requires-python = ">=3.13"
+dependencies = []
+
+[project.optional-dependencies]
+dev = ["pytest"]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
