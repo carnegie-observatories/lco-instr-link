@@ -13,7 +13,6 @@ class TestHenrietta:
         yield link
         link.close()
 
-
     def test_status(self, instrument):
         status = instrument._get_status()
         assert "exposing" in status
@@ -29,7 +28,12 @@ class TestHenrietta:
 
     def test_expose(self, instrument):
         t0 = time.time()
+        # single exposure
         out = instrument.expose(5)
         assert out
         assert time.time() - t0 > 5
-        
+        t0 = time.time()
+        # two exposures
+        out = instrument.expose(5, 2)
+        assert out
+        assert time.time() - t0 > 10
