@@ -2,15 +2,15 @@ import socket
 
 
 class LcoInstrLink:
-    def __init__(self, ip="localhost", port=52801):
+    def __init__(self, ip: str = "localhost", port: int = 52801):
         self.ip = ip
         self.port = port
         self._socket = None
         self._connected = False
 
-    def connect(self):
+    def connect(self) -> bool:
         if self._connected:
-            return
+            return True
         try:
             self._socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             self._socket.connect((self.ip, self.port))
@@ -18,19 +18,20 @@ class LcoInstrLink:
         except Exception as e:
             print(f"Error connecting to {self.ip}:{self.port} - {e}")
             self._connected = False
+        return self._connected
 
-    def ping(self):
+    def ping(self) -> bool:
         if self._connected:
             try:
                 self._socket.sendall(b"ping")
                 response = self._socket.recv(1024)
-                return "unknown" in response.decode()
+                return "ping" in response.decode()
             except Exception as e:
                 print(f"Error pinging {self.ip}:{self.port} - {e}")
                 self._connected = False
         return False
 
-    def close(self):
+    def close(self) -> bool:
         if self._connected:
             try:
                 self._socket.close()
@@ -38,8 +39,9 @@ class LcoInstrLink:
             except Exception as e:
                 print(f"Error closing connection to {self.ip}:{self.port} - {e}")
                 self._connected = False
+        return not self._connected
 
-    def get(self, command):
+    def get(self, command: str) -> str:
         if self._connected:
             try:
                 self._socket.sendall(command.encode())
@@ -48,4 +50,8 @@ class LcoInstrLink:
             except Exception as e:
                 print(f"Error sending command to {self.ip}:{self.port} - {e}")
                 self._connected = False
-        return None
+        else:
+            raise Exception("Not connected")
+        
+    def get_float(self, command: str) -> float:
+        return float(self.get(command))
